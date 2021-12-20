@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:photouploadingflutterapp/imageupload/image_upload.dart';
+import 'package:photouploadingflutterapp/imageupload/show_upload.dart';
 import 'package:photouploadingflutterapp/model/user_model.dart';
 
 import 'login.dart';
@@ -37,10 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Welcome") ,
-        centerTitle: true,
-      ),
+      appBar: _appBar(),
       body: Center(
         child: Padding(
           padding: EdgeInsets.all(20),
@@ -71,14 +70,26 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: Colors.black54,
                       fontWeight: FontWeight.w500
                   )),
-              SizedBox(height: 15,
+              Text(
+                  "${loggedInUser.uid}",
+                  style: TextStyle(fontSize: 20,
+                      color: Colors.black54,
+                      fontWeight: FontWeight.w500
+                  )),
+              SizedBox(
+                height: 15,
               ),
-              ActionChip(label:Text("Logout"), onPressed: (){
-                logout(context);
-              }),
+              ElevatedButton(onPressed: () {
+                Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ImageUpload( userId: loggedInUser.uid)));
+              }  ,
+                  child: Text("Upload Images")),
+              ElevatedButton(onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ShowUploads( userId: loggedInUser.uid)));
+              }  , child: Text("Show Images ")),
             ],
           ),
-
         ),
       ),
     );
@@ -90,7 +101,20 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context)=> LoginScreen()));
   }
-
-
-
+  _appBar(){
+    //getting the size of app bar
+    // get height
+    final appBarHeight = AppBar().preferredSize.height;
+    return PreferredSize(
+        child: AppBar (
+          title : const Text("Profile"),
+          actions: [
+          IconButton(
+          onPressed: () {
+            logout(context);
+          },
+          icon: Icon(Icons.logout),)
+    ],),
+        preferredSize: Size.fromHeight(appBarHeight));
+  }
 }
